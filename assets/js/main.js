@@ -1,6 +1,6 @@
 let offset = 0
 const limit = 5
-let maxLimit = 15
+let maxLimit = 150
 
 const pokemonListLi = document.getElementById("pokemonList")
 const loadMoreItems = document.getElementById("loadMorePokemons")
