@@ -1,14 +1,9 @@
 
 const pokeApi = {}
 
-// pokeApi.getPokemonDetail = (pokemon) => {
-//     return fetch(pokemon.url)
-//         .then((response) => response.json())
-// }
 
-
-pokeApi.getPokemons = (offset = 0, limit = 10) => {
-
+pokeApi.getPokemons = (offset, limit) => {
+   
     const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
 
     return fetch(url)
@@ -18,7 +13,6 @@ pokeApi.getPokemons = (offset = 0, limit = 10) => {
         .then((responseBodyJson) => {
             return responseBodyJson.results
         })
-        // .then((pokemons) => pokemons.map(pokeApi.getPokemonDetail))
         .then((pokemons) => pokemons.map((pokemon => {
             return fetch(pokemon.url)
             .then((response) => response.json())

@@ -1,18 +1,22 @@
-const offset = 0
-const limit = 10
-const url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
+let offset = 0
+const limit = 5
+let maxLimit = 15
 
-
+const pokemonListLi = document.getElementById("pokemonList")
+const loadMoreItems = document.getElementById("loadMorePokemons")
+ 
 function convertPokemonTypesToLi (pokeomnsTypes) {
+
     return pokeomnsTypes.map((typeSlot) => {
-        return (`<li class="type">${typeSlot.type.name}</li>`)
+        return (`<li class="type ${typeSlot.type.name}">${typeSlot.type.name}</li>`)
     })
 }
 
 function convertPokemonToHtml(pokemon) {
+    
     return `
-    <li class="pokemon">
-        <span class="number">#${pokemon.order}</span>
+    <li class="pokemon ${pokemon.types[0].type.name}">
+        <span class="number">#${pokemon.id}</span>
         <span class="name">${pokemon.name}</span>
         <div class="detail">
             <ol class="types">
@@ -25,21 +29,30 @@ function convertPokemonToHtml(pokemon) {
     `
 }
 
-const pokemonListLi = document.getElementById("pokemonList")
+function loadMorePokemon (offset, limit) {
 
+    pokeApi.getPokemons(offset, limit)
+        .then((pokemonList=[]) => {
+            const newListPokemons = pokemonList.map((pokemon)=>{
+                return convertPokemonToHtml(pokemon)
+            })
+            const newHtml = newListPokemons.join("")
+            pokemonListLi.innerHTML += newHtml   
+        })   
+}
 
-pokeApi.getPokemons()
-    .then((pokemonList=[]) => {
-        const newListPokemons = pokemonList.map((pokemon)=>{
-            return convertPokemonToHtml(pokemon)
-        })
-        const newHtml = newListPokemons.join("")
-        pokemonListLi.innerHTML += newHtml
-          
-    })
-    .catch((error) => {
-        console.log(error);
-    })
-    .finally(() => {
-        console.log("sucesso na requisição");
-    })
+loadMorePokemon(offset, limit)
+
+loadMoreItems.addEventListener("click", ()=>{
+    
+    offset += limit
+    const qtdLimit = offset + limit 
+    
+    if(qtdLimit >= maxLimit){
+        loadMorePokemon(maxLimit, limit)
+        loadMoreItems.parentElement.removeChild(loadMoreItems)
+    }else{
+        loadMorePokemon(offset, limit)
+    }
+})
+    
